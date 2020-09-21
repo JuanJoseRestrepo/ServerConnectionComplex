@@ -1,17 +1,17 @@
 package model;
 
-public class UserMessage {
-	
-	public String type = "UserMessage";
+public class NewConnection {
+
+	public String type = "NewConnection";
 	private String id;
 	private String body;
 	private String date;
 	
-	public UserMessage() {
+	public NewConnection() {
 		
 	}
 	
-	public UserMessage(String id,String body,String date) {
+	public NewConnection(String id,String body,String date) {
 		this.id = id;
 		this.body = body;
 		this.date = date;
@@ -28,11 +28,6 @@ public class UserMessage {
 	public String getBody() {
 		return body;
 	}
-	
-	public String getType() {
-		return type;
-	}
-	
 
 	public void setBody(String body) {
 		this.body = body;
@@ -45,4 +40,9 @@ public class UserMessage {
 	public void setDate(String date) {
 		this.date = date;
 	}
+	
+	public String getType() {
+		return type;
+	}
+	
 }

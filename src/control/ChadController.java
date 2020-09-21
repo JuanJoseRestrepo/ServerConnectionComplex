@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import model.DirectMessage;
 import model.Generic;
 import model.Message;
+import model.NewConnection;
 import model.UserMessage;
 
 
@@ -54,9 +55,16 @@ public class ChadController implements OnMessageListener, OnConnectionListener {
 		case "UserMessage":
 			
 			UserMessage userM = gson.fromJson(message, UserMessage.class);
-			System.out.println(userM);
 			s.setUserName(userM.getId());
 			connection.addUser(s, userM.getId());
+			break;
+			
+		case "NewConnection":
+			
+			NewConnection newCon = gson.fromJson(message, NewConnection.class);
+			System.out.println(newCon + "asdasd");
+			
+			
 			break;
 			
 		}
@@ -84,6 +92,7 @@ public class ChadController implements OnMessageListener, OnConnectionListener {
 				()->{
 					
 					view.getMessageArea().appendText("<<< Nuevo cliente conectado!:" + id + ">>>\n");
+					
 				}
 				
 				

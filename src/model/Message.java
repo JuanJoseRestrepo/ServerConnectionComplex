@@ -41,6 +41,9 @@ public class Message {
 		this.date = date;
 	}
 	
+	public String getType() {
+		return type;
+	}
 	
 	
 	

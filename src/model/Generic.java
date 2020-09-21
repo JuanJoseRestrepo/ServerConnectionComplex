@@ -19,5 +19,4 @@ public class Generic {
 	
 	public Generic() {}
 	
-	
 }

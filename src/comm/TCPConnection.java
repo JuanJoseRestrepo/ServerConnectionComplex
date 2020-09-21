@@ -24,7 +24,8 @@ import com.google.gson.Gson;
 
 import comm.Receptor.OnMessageListener;
 import model.Message;
-import model.UserMessage;
+import model.NewConnection;
+
 
 public class TCPConnection extends Thread {
 
@@ -126,6 +127,40 @@ public class TCPConnection extends Thread {
 		this.messageListener = messageListener;
 	}
 	
+	public void actualize() {
+		Gson json = new Gson();
+        for(int i = 0; i < conectados.size();i++) {
+        	Session s = conectados.get(i);
+            System.out.println(conectados.size());
+            for(int j = 0; j < conectados.size();j++) {
+            	if(!(s.getUserName().equalsIgnoreCase(conectados.get(j).getUserName()))) {
+            		System.out.println(conectados.get(j).getUserName() + "  " + j);
+                    NewConnection m = new NewConnection(conectados.get(j).getUserName(),"","");
+                    String objetoNuevo = json.toJson(m);
+                    s.getEmisor().setMessage(objetoNuevo);	
+            	}
+            }
+
+        }
+
+    }
+	
+	public ArrayList<Session> sendActualize(ArrayList<Session> sesions,String id) {
+
+        ArrayList<Session> aux = new ArrayList<>();
+        for(int i = 0; i < sesions.size();i++) {
+
+            if(!(sesions.get(i).getUserName().equalsIgnoreCase(id))) {
+
+                aux.add(sesions.get(i));
+
+            }
+
+        }
+
+        return aux;
+    }
+	
 	public void sendBroadCast(String msg) {
 		
 		for(int i = 0; i < conectados.size();i++) {
@@ -135,39 +170,45 @@ public class TCPConnection extends Thread {
 		
 	}
 
-	
-	public void addUser(Session s,String msg) {
-		int index = salaDeEspera.indexOf(s);
-		Gson json = new Gson();
-		
-		if(conectados.size() == 0) {
-			
-			salaDeEspera.remove(index);
-			conectados.add(s);
-			
-			Message m = new Message(s.getUserName(),"","");
-			String msj = json.toJson(m);
-			connectionListener.onConnection(s.getUserName());
-			s.getEmisor().setMessage(msj);
-			
-		}else if(estaRepetido(msg)) {
-			
-			String msj = "Ese usuario ya existe";
-			Message m = new Message(s.getUserName(),"","");
-			String msj1 = json.toJson(m);
-			connectionListener.OnRepeatConnection(s,msj);
-			s.getEmisor().setMessage(msj1);
-		}else {
-			
-			salaDeEspera.remove(index);
-			conectados.add(s);
-			Message m = new Message(s.getUserName(),"","");
-			String msj = json.toJson(m);
-			connectionListener.onConnection(s.getUserName());
-			s.getEmisor().setMessage(msj);
+	public Session getSession(String id) {
+		Session aux = null;
+		boolean t = false;
+		for(int i = 0; i < conectados.size() && !t;i++) {
+			if(conectados.get(i).getUserName().equals(id)) {
+				
+				aux = conectados.get(i);
+				t = true;
+				
+			}
 		}
 		
+		return aux;
 		
+	}
+	
+	public void addUser(Session s,String msg) {
+        int index = salaDeEspera.indexOf(s);
+        Gson json = new Gson();
+
+        if(estaRepetido(msg)) {
+
+            String msj = "Ese usuario ya existe";
+            Message m = new Message(s.getUserName(),"","");
+            String msj1 = json.toJson(m);
+            connectionListener.OnRepeatConnection(s,msj);
+            //s.getEmisor().setMessage(msj1);
+        }else {
+
+            salaDeEspera.remove(index);
+            conectados.add(s);
+            NewConnection m = new NewConnection(s.getUserName(),"","");
+            String msj = json.toJson(m);
+            connectionListener.onConnection(s.getUserName());
+            s.getEmisor().setMessage(msj);
+            
+            actualize();
+
+        }
 	}
 
 	public void sendDirectMessage(String id,String json) {
