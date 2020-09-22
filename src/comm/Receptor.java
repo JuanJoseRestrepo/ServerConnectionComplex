@@ -31,7 +31,7 @@ public class Receptor extends Thread {
 					listener.onDisconection(s);
 				}else {
 				
-				System.out.println("Recibido" + msj);
+				//System.out.println("Recibido:" + msj);
 				listener.onMessage(s,msj);
 				}
 			} catch (IOException e) {

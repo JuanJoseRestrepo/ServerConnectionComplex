@@ -131,10 +131,10 @@ public class TCPConnection extends Thread {
 		Gson json = new Gson();
         for(int i = 0; i < conectados.size();i++) {
         	Session s = conectados.get(i);
-            System.out.println(conectados.size());
+    
             for(int j = 0; j < conectados.size();j++) {
             	if(!(s.getUserName().equalsIgnoreCase(conectados.get(j).getUserName()))) {
-            		System.out.println(conectados.get(j).getUserName() + "  " + j);
+            		
                     NewConnection m = new NewConnection(conectados.get(j).getUserName(),"","");
                     String objetoNuevo = json.toJson(m);
                     s.getEmisor().setMessage(objetoNuevo);	
@@ -192,25 +192,26 @@ public class TCPConnection extends Thread {
 
         if(estaRepetido(msg)) {
 
-            String msj = "Ese usuario ya existe";
-            Message m = new Message(s.getUserName(),"","");
-            String msj1 = json.toJson(m);
-            connectionListener.OnRepeatConnection(s,msj);
+            String mensaje = "Ese usuario ya existe";
+            Message message1 = new Message(s.getUserName(),"","");
+            String mensaje2 = json.toJson(message1);
+            connectionListener.OnRepeatConnection(s,mensaje2);
             //s.getEmisor().setMessage(msj1);
         }else {
 
             salaDeEspera.remove(index);
             conectados.add(s);
             NewConnection m = new NewConnection(s.getUserName(),"","");
-            String msj = json.toJson(m);
+            String msj1 = json.toJson(m);
+
             connectionListener.onConnection(s.getUserName());
-            s.getEmisor().setMessage(msj);
+            s.getEmisor().setMessage(msj1);
             
             actualize();
-
+            
         }
 	}
-
+	
 	public void sendDirectMessage(String id,String json) {
 		boolean t = false;
 		for(int i = 0; i < conectados.size() && !t;i++) {
@@ -222,8 +223,8 @@ public class TCPConnection extends Thread {
 		}
 	}
 	
-	public Boolean estaRepetido(String nombreDeUsuario) {
-		Boolean t = false;
+	public boolean estaRepetido(String nombreDeUsuario) {
+		boolean t = false;
 		for(int i = 0; i < conectados.size() && !t;i++) {
 			if(conectados.get(i).getUserName().equals(nombreDeUsuario)) {
 			

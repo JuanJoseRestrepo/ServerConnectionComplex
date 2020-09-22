@@ -40,16 +40,20 @@ public class ChadController implements OnMessageListener, OnConnectionListener {
 		//
 		Gson gson = new Gson();
 		Generic type = gson.fromJson(message,Generic.class);
-		
+
 		switch(type.getType()) {
 		case "Message":
-			connection.sendBroadCast(message);
+			Message m = gson.fromJson(message,Message.class);
+			Message m1 = new Message(m.getId(),m.getBody(),m.getDate());
+			String jsonM = gson.toJson(m1);
+			connection.sendBroadCast(jsonM);
 			break;
 		case "DirectMessage":
-			DirectMessage m = gson.fromJson(message,DirectMessage.class);
-			Message normal = new Message(m.getId(),m.getBody(),m.getDate());
+			DirectMessage direct = gson.fromJson(message,DirectMessage.class);
+			Message normal = new Message(direct.getId(),direct.getBody(),direct.getDate());
 			String json = gson.toJson(normal);
-			connection.sendDirectMessage(m.getClientId(),json);
+
+			connection.sendDirectMessage(direct.getClientId(),json);
 			break;
 			
 		case "UserMessage":
