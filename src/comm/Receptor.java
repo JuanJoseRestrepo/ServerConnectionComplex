@@ -15,6 +15,7 @@ public class Receptor extends Thread {
 	public Receptor(Session s,InputStream is){
 		this.is = is;
 		this.s = s;
+	
 	}
 	
 	@Override
@@ -22,24 +23,27 @@ public class Receptor extends Thread {
 		
 		BufferedReader breader = new BufferedReader(new InputStreamReader(this.is));
 		
+		try {
 		while(true) {
 			
-			try {
+			
 				String msj = breader.readLine();
 				if(msj == null) {
-					s.closeSocket();
-					listener.onDisconection(s);
-				}else {
-				
-				//System.out.println("Recibido:" + msj);
-				listener.onMessage(s,msj);
+					TCPConnection.getInstance().closeSession(this);
+					break;
 				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+				if(listener != null) {
+					listener.onMessage(s,msj);
+				}
+				//System.out.println("Recibido:" + msj);
 			
 		}
+		
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 	
 	public void setList(OnMessageListener listener) {

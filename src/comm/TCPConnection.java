@@ -235,5 +235,24 @@ public class TCPConnection extends Thread {
 		
 		return t;
 	}
+	
+	public void closeSession(Receptor receptor) {
+		
+		for(int i = 0; i < conectados.size();i++) {
+			
+			Receptor r = conectados.get(i).getReceptor();
+			
+			if(r.equals(receptor)) {
+				
+				conectados.get(i).closeSocket();
+				conectados.remove(conectados.get(i));
+				break;
+			}
+			
+			
+		}
+		
+	}
+	
 
 }
