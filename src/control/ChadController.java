@@ -72,21 +72,6 @@ public class ChadController implements OnMessageListener, OnConnectionListener {
 			break;
 			
 		}
-		
-		//UI
-	/*	Platform.runLater(
-				
-				()->{
-					
-					Message msjObj = gson.fromJson(message, Message.class);
-					
-					view.getMessageArea().appendText("<<<"+ msjObj.getDate() + " : "+ msjObj.getBody() + "\n");
-				}
-				
-				
-				);
-	}
-	*/
 	}
 
 	@Override
@@ -117,7 +102,7 @@ public class ChadController implements OnMessageListener, OnConnectionListener {
 				
 				()->{
 					
-					view.getMessageArea().appendText("<<< Alto ahi:" + reason + ">>>\n");
+					view.getMessageArea().appendText("<<< Alto ahi,ese usuario ya existe:" + reason + ">>>\n");
 				}
 				
 				

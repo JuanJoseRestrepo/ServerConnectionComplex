@@ -1,30 +1,16 @@
 package comm;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Scanner;
-import java.util.UUID;
 
 import com.google.gson.Gson;
 
 import comm.Receptor.OnMessageListener;
 import model.Message;
 import model.NewConnection;
+import model.UserMessage;
 
 
 public class TCPConnection extends Thread {
@@ -40,11 +26,13 @@ public class TCPConnection extends Thread {
 	private OnMessageListener messageListener;
 	private ArrayList<Session> conectados;
 	private ArrayList<Session> salaDeEspera;
+	private ArrayList<NewConnection> conexiones;
 	
 	private  TCPConnection() {
 		// TODO Auto-generated constructor stub
 		conectados = new ArrayList<Session>();	
-		salaDeEspera = new ArrayList<Session>();		
+		salaDeEspera = new ArrayList<Session>();
+		conexiones = new ArrayList<NewConnection>();
 	}
 
 	
@@ -127,22 +115,16 @@ public class TCPConnection extends Thread {
 		this.messageListener = messageListener;
 	}
 	
-	public void actualize() {
+	public void actualize(UserMessage m) {
 		Gson json = new Gson();
         for(int i = 0; i < conectados.size();i++) {
         	Session s = conectados.get(i);
-    
-            for(int j = 0; j < conectados.size();j++) {
-            	if(!(s.getUserName().equalsIgnoreCase(conectados.get(j).getUserName()))) {
-            		
-                    NewConnection m = new NewConnection(conectados.get(j).getUserName(),"","");
-                    String objetoNuevo = json.toJson(m);
-                    s.getEmisor().setMessage(objetoNuevo);	
-            	}
-            }
-
+        	UserMessage nuevo = new UserMessage(m.getId(),"","");
+        	nuevo.setUsuariosEnviados(m.getUsuariosEnviados());
+        	String objetoNuevo = json.toJson(nuevo);
+        	s.getEmisor().setMessage(objetoNuevo);       
         }
-
+        System.out.println(conectados.size());
     }
 	
 	public ArrayList<Session> sendActualize(ArrayList<Session> sesions,String id) {
@@ -191,23 +173,29 @@ public class TCPConnection extends Thread {
         Gson json = new Gson();
 
         if(estaRepetido(msg)) {
-
-            String mensaje = "Ese usuario ya existe";
-            Message message1 = new Message(s.getUserName(),"","");
-            String mensaje2 = json.toJson(message1);
-            connectionListener.OnRepeatConnection(s,mensaje2);
-            //s.getEmisor().setMessage(msj1);
+            //------------------
+        	salaDeEspera.remove(index);
+        	NewConnection coneccion = new NewConnection(s.getUserName(),"Existe","");
+            String mensaje = s.getUserName();
+            String mensaje2 = json.toJson(coneccion);
+            connectionListener.OnRepeatConnection(s,mensaje);
+            s.getEmisor().setMessage(mensaje2);
+           
+            
         }else {
 
             salaDeEspera.remove(index);
             conectados.add(s);
             NewConnection m = new NewConnection(s.getUserName(),"","");
+            conexiones.add(m);
+            UserMessage userM = new UserMessage(s.getUserName(),"","");
+            userM.setUsuariosEnviados(conexiones);
+            System.out.println(conexiones.size());
             String msj1 = json.toJson(m);
-
             connectionListener.onConnection(s.getUserName());
             s.getEmisor().setMessage(msj1);
             
-            actualize();
+            actualize(userM);
             
         }
 	}

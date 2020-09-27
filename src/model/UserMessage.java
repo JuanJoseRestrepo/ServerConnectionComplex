@@ -1,11 +1,14 @@
 package model;
 
+import java.util.ArrayList;
+
 public class UserMessage {
 	
 	public String type = "UserMessage";
 	private String id;
 	private String body;
 	private String date;
+	private ArrayList<NewConnection> usuariosEnviados;
 	
 	public UserMessage() {
 		
@@ -15,6 +18,7 @@ public class UserMessage {
 		this.id = id;
 		this.body = body;
 		this.date = date;
+		usuariosEnviados = new ArrayList<NewConnection>();
 	}
 
 	public String getId() {
@@ -45,4 +49,13 @@ public class UserMessage {
 	public void setDate(String date) {
 		this.date = date;
 	}
+	
+	public ArrayList<NewConnection> getUsuariosEnviados() {
+		return usuariosEnviados;
+	}
+	public void setUsuariosEnviados(ArrayList<NewConnection> usuariosEnviados) {
+		this.usuariosEnviados = usuariosEnviados;
+	}
+	
+	
 }
