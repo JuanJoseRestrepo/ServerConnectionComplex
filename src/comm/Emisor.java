@@ -22,8 +22,8 @@ public class Emisor {
 						bwriter.write(msg + "\n");
 						bwriter.flush();
 					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					
+						System.out.println("Fue desconectado");
 					}
 	}).start();
 		

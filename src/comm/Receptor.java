@@ -41,7 +41,9 @@ public class Receptor extends Thread {
 		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			TCPConnection.getInstance().closeSession(this);
+			System.out.println("Aqui fueque fueque");
+			
 		}
 		
 	}

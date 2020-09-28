@@ -10,6 +10,7 @@ import com.google.gson.Gson;
 import comm.Receptor.OnMessageListener;
 import model.Message;
 import model.NewConnection;
+import model.UserDisconnect;
 import model.UserMessage;
 
 
@@ -119,6 +120,7 @@ public class TCPConnection extends Thread {
 		Gson json = new Gson();
         for(int i = 0; i < conectados.size();i++) {
         	Session s = conectados.get(i);
+        	System.out.println(conectados.get(i).getUserName());
         	UserMessage nuevo = new UserMessage(m.getId(),"","");
         	nuevo.setUsuariosEnviados(m.getUsuariosEnviados());
         	String objetoNuevo = json.toJson(nuevo);
@@ -126,6 +128,18 @@ public class TCPConnection extends Thread {
         }
         System.out.println(conectados.size());
     }
+	
+	
+	public void actualizeDisconnectUser(String id) {
+		Gson json = new Gson();
+		 for(int i = 0; i < conectados.size();i++) {
+			Session s = conectados.get(i);
+			UserDisconnect nuevo = new UserDisconnect(id);
+	        String objetoNuevo = json.toJson(nuevo);
+	        s.getEmisor().setMessage(objetoNuevo);  
+		 }
+	}
+	
 	
 	public ArrayList<Session> sendActualize(ArrayList<Session> sesions,String id) {
 
@@ -190,7 +204,7 @@ public class TCPConnection extends Thread {
             conexiones.add(m);
             UserMessage userM = new UserMessage(s.getUserName(),"","");
             userM.setUsuariosEnviados(conexiones);
-            System.out.println(conexiones.size());
+            System.out.println(conexiones.size() + "asdasdsad");
             String msj1 = json.toJson(m);
             connectionListener.onConnection(s.getUserName());
             s.getEmisor().setMessage(msj1);
@@ -214,7 +228,7 @@ public class TCPConnection extends Thread {
 	public boolean estaRepetido(String nombreDeUsuario) {
 		boolean t = false;
 		for(int i = 0; i < conectados.size() && !t;i++) {
-			if(conectados.get(i).getUserName().equals(nombreDeUsuario)) {
+			if(conectados.get(i).getUserName().equalsIgnoreCase(nombreDeUsuario)) {
 			
 				t = true;
 				
@@ -229,11 +243,14 @@ public class TCPConnection extends Thread {
 		for(int i = 0; i < conectados.size();i++) {
 			
 			Receptor r = conectados.get(i).getReceptor();
-			
+		
 			if(r.equals(receptor)) {
 				
+				actualizeDisconnectUser(conectados.get(i).getUserName());
+				conexiones.remove(i);
 				conectados.get(i).closeSocket();
 				conectados.remove(conectados.get(i));
+				System.out.println(conectados.size());
 				break;
 			}
 			
